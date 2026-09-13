@@ -15,6 +15,8 @@
 - [ ] `python scripts/check_public_content.py` besteht lokal.
 - [ ] Es sind keine Datensätze, Modellgewichte, Adapter, Checkpoints, Embedding-Indizes, Trainingsläufe oder Produktivkonfigurationen enthalten.
 - [ ] Die Änderung suggeriert keine offizielle Unterstützung durch NVIDIA oder einen Kunden.
+- [ ] Ich reiche den Beitrag über einen Pull Request ein und benötige keinen direkten Repository-Schreibzugriff.
+- [ ] Ich habe keinen privilegierten Workflow-Trigger, Secret-Verweis, veränderlichen Action-Tag oder externen aktiven Inhalt ergänzt.
 
 ## Evidenz und Reviewer
 

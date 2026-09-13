@@ -12,6 +12,7 @@ MAX_TEXT_BYTES = 2 * 1024 * 1024
 MAX_IMAGE_BYTES = 5 * 1024 * 1024
 IMAGE_SUFFIXES = {".png", ".jpg", ".jpeg", ".gif", ".webp"}
 IGNORED_PARTS = {".git", ".pages-site", ".pages-src"}
+FULL_ACTION_SHA = re.compile(r"^[0-9a-f]{40}$")
 PROHIBITED_SUFFIXES = {
     ".7z", ".bin", ".ckpt", ".db", ".dmp", ".dump", ".env", ".fmb",
     ".gz", ".jks", ".keystore", ".onnx", ".p12", ".parquet", ".pem",
@@ -31,6 +32,8 @@ PATTERNS = {
     "Vertraulichkeitsmarkierung": re.compile(
         r"\b(?:NVIDIA CONFIDENTIAL|CLIENT CONFIDENTIAL|INTERNAL USE ONLY|DO NOT DISTRIBUTE)\b"
     ),
+    "aktive eingebettete Inhalte": re.compile(r"<\s*(?:script|iframe|object|embed)\b", re.IGNORECASE),
+    "Git-LFS-Pointer": re.compile(r"^version https://git-lfs\.github\.com/spec/v1$", re.MULTILINE),
 }
 MARKDOWN_LINK = re.compile(r"\[[^\]]+\]\(([^)]+)\)")
 PRESENTATION_PAIRS = (
@@ -40,7 +43,35 @@ PRESENTATION_PAIRS = (
     ("docs/en/workflow.md", "docs/de/workflow.md"),
     ("docs/en/toolchain.md", "docs/de/toolchain.md"),
     ("docs/en/governance.md", "docs/de/governance.md"),
+    ("SECURITY.md", "de/SECURITY.md"),
 )
+
+
+def pruefe_workflows(fehler: list[str]) -> None:
+    """Verwirft privilegierte PR-Trigger und veränderliche Action-Referenzen."""
+    workflow_dir = ROOT / ".github" / "workflows"
+    for path in sorted(workflow_dir.glob("*.y*ml")):
+        content = path.read_text(encoding="utf-8")
+        rel = path.relative_to(ROOT)
+        if re.search(r"(?m)^\s*(?:pull_request_target|workflow_run|issue_comment)\s*:", content):
+            fehler.append(f"{rel}: privilegierter oder indirekter Trigger ist nicht erlaubt")
+        is_pull_request = bool(re.search(r"(?m)^\s*pull_request\s*:", content))
+        if is_pull_request and re.search(
+            r"(?m)^\s*(?:contents|actions|checks|deployments|id-token|packages|pages|pull-requests)\s*:\s*write\s*$",
+            content,
+        ):
+            fehler.append(f"{rel}: Pull-Request-Workflow verlangt Schreibrechte")
+        if is_pull_request and "secrets." in content:
+            fehler.append(f"{rel}: Pull-Request-Workflow referenziert Repository Secrets")
+        for line in content.splitlines():
+            match = re.match(r"\s*-?\s*uses:\s*([^\s#]+)", line)
+            if not match:
+                continue
+            action = match.group(1)
+            if action.startswith("./"):
+                continue
+            if "@" not in action or not FULL_ACTION_SHA.fullmatch(action.rsplit("@", 1)[1]):
+                fehler.append(f"{rel}: Action ist nicht auf vollständige Commit-SHA fixiert: {action}")
 
 
 def pruefe_sprachpfade(fehler: list[str]) -> None:
@@ -70,10 +101,14 @@ def pruefe_sprachpfade(fehler: list[str]) -> None:
 def main() -> int:
     fehler: list[str] = []
     pruefe_sprachpfade(fehler)
+    pruefe_workflows(fehler)
     for path in sorted(p for p in ROOT.rglob("*") if p.is_file()):
         if IGNORED_PARTS.intersection(path.parts):
             continue
         rel = path.relative_to(ROOT)
+        if path.is_symlink():
+            fehler.append(f"{rel}: symbolische Links sind nicht erlaubt")
+            continue
         lowered_parts = {part.lower() for part in rel.parts}
         suffix = path.suffix.lower()
         size = path.stat().st_size
