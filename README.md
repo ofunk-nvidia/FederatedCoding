@@ -448,6 +448,263 @@ Klassisches FedAvg setzt kompatible Modell- und Adapterstrukturen voraus. Unters
 
 ---
 
+## 11.1 Empfohlene NVIDIA-Toolchain für Fine-Tuning und Post-Training
+
+### Klare Empfehlung für den ersten POC
+
+Für dieses Projekt wird folgende Kombination bevorzugt:
+
+```text
+Lokale Repository-Daten
+    ↓
+NeMo Curator + projektspezifische Code-Filter
+    ↓
+NeMo AutoModel + LoRA/PEFT
+    ↓
+NVFLARE für föderierte Trainingsrunden
+    ↓
+NeMo Evaluator + eigene Compiler-/Test-Evaluation
+    ↓
+lokale Inferenz; Optimierung erst nach erfolgreichem POC
+```
+
+Die Kernentscheidung lautet:
+
+> **NeMo AutoModel mit LoRA/PEFT ist die primäre Fine-Tuning-Schicht. NVFLARE orchestriert die Federation, trainiert aber nicht anstelle der lokalen Trainingsbibliothek.**
+
+Diese Trennung ist wichtig:
+
+- NeMo AutoModel führt das lokale SFT-/PEFT-Training aus.
+- NVFLARE verteilt freigegebene Jobs und aggregiert kompatible Adapterupdates.
+- NeMo Curator unterstützt die lokale Aufbereitung und Qualitätskontrolle der Trainingsdaten.
+- NeMo Evaluator organisiert reproduzierbare Modellbewertungen.
+- Compiler, statische Analyse und Regressionstests bleiben die maßgebliche fachliche Verifikation für Code-Migrationen.
+
+### A. NeMo AutoModel – erste Wahl für SFT und PEFT
+
+[NVIDIA NeMo AutoModel](https://docs.nvidia.com/nemo/automodel/latest/) ist für den POC die bevorzugte Trainingsschicht. Es bietet eine moderne, Hugging-Face-nahe Arbeitsweise, unterstützt lokale Workstations sowie verteilte Ausführung und dokumentiert SFT-, PEFT-, Retrieval-Fine-Tuning- und Knowledge-Distillation-Rezepte.
+
+Für Federated Coding ist das vorteilhaft, weil:
+
+- bestehende offene Modell-Checkpoints leichter evaluiert werden können;
+- das Base Model eingefroren bleiben kann;
+- nur kleine LoRA-Adapter trainiert und versioniert werden;
+- Trainingsrezepte lokal beim Kunden laufen können;
+- identische Adapterstrukturen über NVFLARE aggregierbar gemacht werden können;
+- bei wachsendem Bedarf verteilte NVIDIA-GPU-Funktionen verfügbar sind.
+
+Für den POC gilt:
+
+```yaml
+training_method: LoRA
+base_model: frozen
+full_parameter_training: false
+customer_adapter: private
+federated_adapter: separate
+```
+
+**Full-Parameter-SFT wird im ersten POC nicht empfohlen.** Es benötigt mehr Rechenleistung, erzeugt größere kundenspezifische Artefakte, erschwert die Federation und vergrößert den Prüfbereich für Memorisation und Rückruf.
+
+QLoRA kann als Hardware-sparende Variante getestet werden. Vor der föderierten Aggregation ist jedoch nachzuweisen, dass alle Sites dieselbe Quantisierungs-, Modell-, Target-Layer- und Adapterkonfiguration verwenden und kompatible Updates erzeugen.
+
+### B. NeMo Curator – lokal für Datenhygiene und Trainingsdatensätze
+
+[NeMo Curator](https://docs.nvidia.com/nemo/curator/latest/) wird als lokale Datenaufbereitungsschicht empfohlen. Relevante Funktionen sind unter anderem Qualitätsfilter, exakte und unscharfe Deduplizierung, semantische Deduplizierung, Decontamination, Klassifikation, PII-Verarbeitung und synthetische Datengenerierung.
+
+Für proprietären Code reicht ein allgemeiner Text-Curator allein nicht. Das Projekt benötigt zusätzliche Code-spezifische Filter:
+
+- Secret Scanning;
+- Copyright- und License-Header-Erkennung;
+- Repository- und Commit-Provenienz;
+- Ausschluss von Vendor-, Generated- und Third-Party-Code;
+- Identifier-, Pfad-, Host-, Schema- und Kundennamen-Erkennung;
+- AST-basierte statt nur textbasierter Deduplizierung;
+- Erkennung ungewöhnlicher Codefragmente mit hohem Wiedererkennungsrisiko;
+- Trennung privater Beispiele von föderierbaren Klasse-E-Beispielen;
+- Decontamination gegenüber Evaluations- und Canary-Datensätzen.
+
+NeMo Curator muss innerhalb der Kundenumgebung laufen. Ungefilterte Repositories werden nicht zu einem zentralen Curator-Cluster übertragen.
+
+### C. NVFLARE – Orchestrierung und Schutz der föderierten Runde
+
+[NVIDIA FLARE](https://nvidia.github.io/NVFlare/) bleibt die empfohlene föderierte Control Plane. Es verbindet die lokalen NeMo-AutoModel-Trainer, erzwingt den erlaubten Job- und Updatepfad und aggregiert nur kompatible Adapter.
+
+Die logische Integration lautet:
+
+```text
+NVFLARE Job
+    ↓
+lokale Site Policy
+    ↓
+NeMo-AutoModel-LoRA-Training
+    ↓
+Parameter-Allowlist + Clipping + Privacy-Kontrollen
+    ↓
+geschütztes Adapter-Delta
+    ↓
+NVFLARE-Aggregation
+```
+
+NVFLARE darf weder Repository-Zugriff noch Rechteklassifikation zentral übernehmen. Die Site entscheidet selbst, welcher lokale Datensatz für welchen Job zulässig ist.
+
+### D. NeMo Evaluator – Benchmark-Rahmen, nicht alleinige Wahrheit
+
+[NVIDIA NeMo Evaluator](https://docs.nvidia.com/nemo/evaluator/) wird für reproduzierbare Modell- und Benchmarkläufe empfohlen. Allgemeine LLM-Metriken reichen für Legacy-Migration jedoch nicht aus.
+
+Die verbindliche Evaluation kombiniert:
+
+1. NeMo-Evaluator-Ergebnisse;
+2. Syntax- und Compiler-Erfolg;
+3. Unit-, Integrations- und Golden-Master-Tests;
+4. statische Analyse und Security Scans;
+5. Datenbank- und Transaktionsvergleiche;
+6. Canary-, Identifier- und Code-Clone-Leakage;
+7. menschliche Code- und Fachreview.
+
+Ein Adapter darf nicht freigegeben werden, wenn er in allgemeinen Benchmarks besser wird, aber fachliche Regressionen oder zusätzliches Leakage erzeugt.
+
+### E. NeMo RL – erst nach SFT/LoRA und belastbarem Verifier
+
+[NVIDIA NeMo RL](https://docs.nvidia.com/nemo/rl/latest/) ist die empfohlene spätere Post-Training-Schicht für Preference- und Reinforcement-Learning-Verfahren. Im ersten POC wird sie bewusst noch nicht vorausgesetzt.
+
+Der sinnvolle Ausbaupfad ist:
+
+```text
+1. RAG + Tools ohne Training
+2. LoRA-SFT auf kuratierten Migrationsbeispielen
+3. Preference-Lernen auf menschlich bewerteten Kandidaten
+4. RL erst mit robustem Compiler-/Test-Reward
+```
+
+Für Coding-Migrationen kann ein verifizierbarer Reward besonders wertvoll sein:
+
+```text
+kompiliert                         + Teilreward
+Unit Tests bestanden              + Reward
+Golden Master fachlich identisch  + hoher Reward
+Security-/License-Gate verletzt   - hoher Malus / Abbruch
+Canary oder interner Identifier    - sofortige Quarantäne
+```
+
+Aber ein Compiler-Erfolg allein ist kein ausreichender Reward. Ein semantisch falsches Programm kann korrekt kompilieren. Auch Test-Hacking ist möglich. Deshalb müssen Reward-Funktionen mehrere voneinander unabhängige Signale kombinieren und gegen Ausnutzung getestet werden.
+
+Empfohlene Reihenfolge innerhalb von NeMo RL:
+
+- zunächst Preference-Daten aus menschlichen Reviews sammeln;
+- DPO oder ein vergleichbares direktes Preference-Verfahren prüfen, wenn ausreichend saubere Gewinner-/Verlierer-Paare vorliegen;
+- GRPO/PPO-artige Verfahren erst evaluieren, wenn ein stabiler, manipulationsresistenter und günstiger Verifier existiert;
+- RL-Beiträge nicht automatisch föderieren; Reward-, Trajectory- und Rollout-Daten können ebenfalls proprietären Code enthalten.
+
+### F. NeMo Framework und Megatron Core – Skalierungsoption, nicht POC-Default
+
+Das umfassende [NVIDIA NeMo Framework](https://docs.nvidia.com/nemo-framework/) beziehungsweise Megatron Core ist sinnvoll, wenn später sehr große Modelle, Full-Parameter-SFT, mehrere Nodes oder komplexe Parallelisierung erforderlich sind.
+
+Für den ersten POC würde dies unnötige Komplexität erzeugen. Der Wechsel wird erst erwogen, wenn mindestens eines dieser Kriterien erfüllt ist:
+
+- das ausgewählte Modell wird von NeMo AutoModel nicht ausreichend unterstützt;
+- LoRA/QLoRA liefert nachweislich unzureichende Qualität;
+- ein Full-Parameter-Training ist rechtlich, wirtschaftlich und technisch freigegeben;
+- Training muss über mehrere Nodes skaliert werden;
+- Megatron-spezifische Parallelisierung bringt einen gemessenen Vorteil.
+
+### G. NeMo Microservices – mögliche Produktisierung, nicht für den ersten lokalen POC
+
+NeMo Microservices können später eine API-basierte Unternehmensplattform für Customization und Evaluation unterstützen. Sie sind nicht der Ausgangspunkt für den lokalen Forschungs-POC, weil zunächst Trainingslogik, Datenpfade, Rechteprüfung und Leakage-Gates transparent und direkt kontrollierbar bleiben sollen.
+
+Ein späterer Einsatz ist nur sinnvoll, wenn:
+
+- erforderliche NVIDIA-Entitlements und Betriebsbedingungen geklärt sind;
+- die Lösung vollständig in der erlaubten Kundenumgebung betrieben werden kann;
+- Tenant-Isolation und Administratorzugriff geprüft sind;
+- die Microservice-API alle lokalen Policy- und Provenienzanforderungen durchsetzt;
+- kein proprietärer Trainingsdatensatz in einen unzulässigen zentralen Dienst gelangt.
+
+### H. TensorRT-LLM oder NIM – erst für die Inferenzoptimierung
+
+[TensorRT-LLM](https://docs.nvidia.com/tensorrt-llm/) oder ein geeignetes NVIDIA NIM kann später Latenz, Durchsatz und reproduzierbares Deployment verbessern. Diese Komponenten lösen weder Datenrechte noch Training oder Federation. Sie werden erst nach erfolgreichem Qualitäts- und Leakage-Nachweis aufgenommen.
+
+Für den POC genügt zunächst eine einfache lokale Inferenz, sofern sie dasselbe Base Model und die getesteten Adapter korrekt lädt.
+
+### Entscheidungsmatrix
+
+| NVIDIA-Komponente | Rolle | POC | Späterer Ausbau |
+|---|---|---:|---:|
+| NeMo Curator | lokale Datenqualität, Deduplizierung, Decontamination | ja, gezielt | ja |
+| NeMo AutoModel | lokales SFT/PEFT/LoRA | **ja, Kernkomponente** | ja |
+| NVFLARE | föderierte Orchestrierung und Aggregation | ja, ab Phase 5 | ja |
+| NeMo Evaluator | reproduzierbare Evaluation | ja | ja |
+| NeMo RL | DPO/RL-basiertes Post-Training | nein, zunächst vorbereiten | optional |
+| NeMo Framework/Megatron Core | sehr großes oder verteiltes Training | nein | bei Skalierungsbedarf |
+| NeMo Microservices | verwaltete Produktplattform | nein | optional nach Governance-Prüfung |
+| TensorRT-LLM/NIM | Inferenzoptimierung und Serving | nein | nach erfolgreichem Modellnachweis |
+
+### Empfohlener minimaler Technologie-Stack
+
+```yaml
+data_preparation:
+  framework: NeMo Curator
+  execution: local_customer_environment
+  extensions:
+    - code_provenance
+    - licence_policy
+    - secret_scanning
+    - ast_deduplication
+    - evaluation_decontamination
+
+fine_tuning:
+  framework: NeMo AutoModel
+  method: LoRA
+  base_model: frozen
+  full_parameter_sft: disabled
+
+federation:
+  framework: NVFLARE
+  payload: allowlisted_lora_parameters_only
+  minimum_cohort: configurable
+  individual_updates_visible: false_target
+
+post_training:
+  phase_1: supervised_fine_tuning
+  phase_2: preference_learning_optional
+  phase_3: reinforcement_learning_only_with_verified_reward
+
+evaluation:
+  framework: NeMo Evaluator
+  mandatory_external_gates:
+    - compile
+    - unit_tests
+    - golden_master
+    - static_analysis
+    - security_scan
+    - licence_scan
+    - leakage_scan
+
+inference:
+  poc: simple_local_runtime
+  production_candidate:
+    - TensorRT-LLM
+    - NVIDIA NIM
+```
+
+### Entscheidung zum Basismodell
+
+Die NVIDIA-Toolchain wird festgelegt, bevor ein konkretes Basismodell festgeschrieben wird. Codex soll zwei bis drei lokal betreibbare Code-Modelle anhand eines kleinen Legacy-Migrationsbenchmarks vergleichen.
+
+Pflichtkriterien:
+
+- Lizenz erlaubt kommerzielle lokale Nutzung und das geplante Fine-Tuning;
+- Modellgewichte sind innerhalb der Kundengrenze betreibbar;
+- NeMo AutoModel oder ein sauber integrierbarer kompatibler Trainer unterstützt das Modell;
+- Kontextlänge reicht für die gewählten Migrationsobjekte;
+- COBOL-, SQL-, PL/SQL- und Java-Verständnis wird praktisch gemessen;
+- Tool Calling beziehungsweise strukturierte Ausgabe ist hinreichend stabil;
+- Hardwarebedarf passt zur Zielumgebung;
+- Adapter lassen sich deterministisch speichern, laden, vergleichen und gegebenenfalls aggregieren.
+
+Ein Modell wird nicht aufgrund eines allgemeinen Coding-Benchmarks ausgewählt. Maßgeblich ist der projektspezifische Benchmark aus Parser-Verständnis, korrekter Spezifikation, kleiner Migration, Compilererfolg, fachlichen Tests und Leakage-Verhalten.
+
+---
+
 ## 12. Urheberrecht, Verträge und Lizenzen
 
 Diese Spezifikation ist keine Rechtsberatung. Vor echter Nutzung muss der konkrete Sachverhalt geprüft werden.
@@ -825,6 +1082,12 @@ Vor Implementierung müssen aktuelle Versionen, Lizenzen und Funktionsstände an
 - NVIDIA FLARE: <https://nvidia.github.io/NVFlare/>
 - NVIDIA FLARE Security: <https://nvidia.github.io/NVFlare/security/>
 - NVIDIA FLARE Repository und Beispiele: <https://github.com/NVIDIA/NVFlare>
+- NVIDIA NeMo AutoModel: <https://docs.nvidia.com/nemo/automodel/latest/>
+- NVIDIA NeMo Curator: <https://docs.nvidia.com/nemo/curator/latest/>
+- NVIDIA NeMo Evaluator: <https://docs.nvidia.com/nemo/evaluator/>
+- NVIDIA NeMo RL: <https://docs.nvidia.com/nemo/rl/latest/>
+- NVIDIA NeMo Framework: <https://docs.nvidia.com/nemo-framework/>
+- NVIDIA TensorRT-LLM: <https://docs.nvidia.com/tensorrt-llm/>
 - Hugging Face PEFT/LoRA: <https://huggingface.co/docs/peft/package_reference/lora>
 - Deutsches Urheberrechtsgesetz, Schutz von Computerprogrammen (§ 69a): <https://www.gesetze-im-internet.de/urhg/__69a.html>
 - Berechtigte Handlungen bei Computerprogrammen (§ 69d): <https://www.gesetze-im-internet.de/urhg/__69d.html>
