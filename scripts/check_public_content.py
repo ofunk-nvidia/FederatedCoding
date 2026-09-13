@@ -1,0 +1,83 @@
+#!/usr/bin/env python3
+"""Konservatives Publication Gate für dieses reine Dokumentations-Repository."""
+
+from __future__ import annotations
+
+import re
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+SELF = Path(__file__).resolve()
+MAX_TEXT_BYTES = 2 * 1024 * 1024
+MAX_IMAGE_BYTES = 5 * 1024 * 1024
+IMAGE_SUFFIXES = {".png", ".jpg", ".jpeg", ".gif", ".webp"}
+PROHIBITED_SUFFIXES = {
+    ".7z", ".bin", ".ckpt", ".db", ".dmp", ".dump", ".env", ".fmb",
+    ".gz", ".jks", ".keystore", ".onnx", ".p12", ".parquet", ".pem",
+    ".pfx", ".pt", ".pth", ".rdf", ".safetensors", ".sqlite", ".tar", ".zip",
+}
+PROHIBITED_PARTS = {
+    "adapters", "checkpoints", "client-data", "customer-data", "customer-projects",
+    "datasets", "model-weights", "raw-data",
+}
+PATTERNS = {
+    "privater Schlüssel": re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----"),
+    "GitHub-Token": re.compile(r"\b(?:ghp|github_pat)_[A-Za-z0-9_]{20,}\b"),
+    "AWS-Zugriffsschlüssel": re.compile(r"\b(?:AKIA|ASIA)[A-Z0-9]{16}\b"),
+    "Zugangsdaten-Zuweisung": re.compile(
+        r"(?i)\b(?:password|passwd|pwd|secret|api[_-]?key|access[_-]?token)\s*[:=]\s*['\"]?[^\s'\"<{]{8,}"
+    ),
+    "Vertraulichkeitsmarkierung": re.compile(
+        r"\b(?:NVIDIA CONFIDENTIAL|CLIENT CONFIDENTIAL|INTERNAL USE ONLY|DO NOT DISTRIBUTE)\b"
+    ),
+}
+
+
+def main() -> int:
+    fehler: list[str] = []
+    for path in sorted(p for p in ROOT.rglob("*") if p.is_file()):
+        if ".git" in path.parts:
+            continue
+        rel = path.relative_to(ROOT)
+        lowered_parts = {part.lower() for part in rel.parts}
+        suffix = path.suffix.lower()
+        size = path.stat().st_size
+
+        if lowered_parts & PROHIBITED_PARTS:
+            fehler.append(f"{rel}: gesperrter Pfad")
+            continue
+        if suffix in PROHIBITED_SUFFIXES:
+            fehler.append(f"{rel}: gesperrter Dateityp")
+            continue
+        if suffix in IMAGE_SUFFIXES:
+            if size > MAX_IMAGE_BYTES:
+                fehler.append(f"{rel}: Bild ist größer als {MAX_IMAGE_BYTES} Bytes")
+            continue
+        if size > MAX_TEXT_BYTES:
+            fehler.append(f"{rel}: Datei ist größer als {MAX_TEXT_BYTES} Bytes")
+            continue
+        try:
+            content = path.read_text(encoding="utf-8")
+        except UnicodeDecodeError:
+            fehler.append(f"{rel}: nicht freigegebene Binärdatei")
+            continue
+        if path.resolve() == SELF:
+            continue
+        for label, pattern in PATTERNS.items():
+            if pattern.search(content):
+                fehler.append(f"{rel}: möglicher Fund – {label}")
+
+    if fehler:
+        print("Publication Gate fehlgeschlagen:")
+        for fund in fehler:
+            print(f"- {fund}")
+        print("Auch nach Korrektur ist ein menschliches Provenienz- und Vertraulichkeitsreview Pflicht.")
+        return 1
+
+    print("Automatisches Publication Gate bestanden.")
+    print("Es ersetzt kein menschliches Review von Provenienz, Lizenz, Vertraulichkeit und Datenschutz.")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

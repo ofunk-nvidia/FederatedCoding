@@ -8,6 +8,8 @@
 **Beispielziel:** Migration von COBOL, JCL, Copybooks, PL/SQL und Oracle Forms nach Java oder eine andere freigegebene Zielarchitektur  
 **Technische Hypothese:** Lokaler Code-Kontext + verifizierbare Transformation + optionales föderiertes Lernen mit NVIDIA FLARE
 
+> **Unabhängiges exploratives Projekt.** Dieses Repository beschreibt kein offizielles NVIDIA-Produkt, keine Zusage, keine Referenzarchitektur, keine Rechtsberatung und keine Kundenimplementierung. Es enthält keinen freigegebenen Weg zur Veröffentlichung vertraulicher Kunden-, Arbeitgeber- oder Drittinhalte.
+
 ---
 
 ## 0. Verbindlicher Arbeitsauftrag an Codex
@@ -20,11 +22,17 @@ Lies diese Datei vollständig, bevor du Änderungen vornimmst. Behandle sie als 
 
 ### Mission
 
-Entwickle zunächst einen lokal reproduzierbaren Proof of Concept für die kundenzentrierte Modernisierung proprietärer Legacy-Software. Der POC soll zeigen, wie ein KI-Coding-System ein kundenspezifisches System verstehen, transformieren und verifizieren kann, ohne den Quellcode oder daraus rekonstruierbares Kundenwissen in ein fremdes oder gemeinsames Modell zu übertragen.
+Pflege eine öffentliche, GitHub-native Referenzarchitektur, die Werkzeuge, Kontrollen, Entscheidungen und Workflows für einen separat freizugebenden Proof of Concept zur kundenzentrierten Modernisierung proprietärer Legacy-Software erklärt. Der Blueprint zeigt, wie ein KI-Coding-System ein kundenspezifisches System verstehen, transformieren und verifizieren könnte, ohne Quellcode oder daraus rekonstruierbares Kundenwissen in ein fremdes oder gemeinsames Modell zu übertragen.
+
+### Repository-Geltungsbereich
+
+Dieses Repository ist Single Source of Truth und Präsentationsschicht für das Konzept. Es enthält ausschließlich Dokumentation, Mermaid-Diagramme, Entscheidungsprotokolle, Quellenlinks sowie kleine synthetische Pseudocode- oder Konfigurationsfragmente.
+
+Es darf niemals Kundenprojekte ausführen oder Kunden-Repositories, Datensätze, Prompts oder Outputs, Modellgewichte, Adapter, Checkpoints, Zugangsdaten, Produktivkonfigurationen, Deployments oder Trainingsläufe aufnehmen. Jeder POC und jede Kundenimplementierung benötigt ein getrenntes, ausdrücklich freigegebenes privates Repository und eine isolierte Umgebung. Hier dürfen nur geprüfte, bereinigte und nicht kundenspezifische Erkenntnisse zusammengefasst werden.
 
 Der erste POC verwendet ausschließlich synthetische oder eindeutig freigegebene Beispiel-Repositories. Er greift nicht auf echte Kunden-Repositories, Produktivdatenbanken, Unternehmensnetzwerke oder kostenpflichtige Cloud-Ressourcen zu.
 
-Arbeite in Phasen:
+Die folgenden Phasen beschreiben den Workflow für ein getrenntes Implementierungs-Repository; sie autorisieren keine Umsetzung in diesem Repository:
 
 1. Prüfe Repository, Git-Status, Entwicklungsumgebung, Python-, Java- und Container-Unterstützung sowie verfügbare CPU-/GPU-Ressourcen.
 2. Validiere aktuelle offizielle Primärquellen zu NVFLARE, PEFT/LoRA, den gewählten Parsern, Compilern und Ziel-Frameworks.
@@ -46,6 +54,9 @@ Arbeite in Phasen:
 - Jede Migration benötigt ausführbare Tests, statische Prüfungen, menschliche Freigabe und nachvollziehbare Herkunft.
 - Unklare Rechte oder Herkunft führen zu `DENY`, nicht zu stillschweigender Nutzung.
 - Alle Abhängigkeiten, Modelle, Trainingsdaten und generierten Artefakte müssen eine maschinenlesbare Provenienz besitzen.
+- Vor jeder Aufnahme einer Quelle, eines Datensatzes, Modells, generierten Artefakts, Benchmark-Ergebnisses oder Visuals gilt [PUBLICATION_POLICY.md](PUBLICATION_POLICY.md). Öffentliche Abrufbarkeit ist keine Open-Source-Lizenz.
+- [OPEN_SOURCE_BASELINE.md](OPEN_SOURCE_BASELINE.md) ist das Zulassungsregister für Werkzeuge; vor jeder Empfehlung ist die konkrete Version zu prüfen.
+- Jeder Pull Request muss vor dem Merge das automatisierte Publication Gate und eine menschliche Provenienzprüfung bestehen.
 
 ---
 
@@ -607,21 +618,15 @@ Für den ersten POC würde dies unnötige Komplexität erzeugen. Der Wechsel wir
 - Training muss über mehrere Nodes skaliert werden;
 - Megatron-spezifische Parallelisierung bringt einen gemessenen Vorteil.
 
-### G. NeMo Microservices – mögliche Produktisierung, nicht für den ersten lokalen POC
+### G. NeMo Microservices – nicht Teil der Open-Source-Baseline
 
-NeMo Microservices können später eine API-basierte Unternehmensplattform für Customization und Evaluation unterstützen. Sie sind nicht der Ausgangspunkt für den lokalen Forschungs-POC, weil zunächst Trainingslogik, Datenpfade, Rechteprüfung und Leakage-Gates transparent und direkt kontrollierbar bleiben sollen.
+NeMo Microservices gehören nicht zur strikten Open-Source-Werkzeugbasis dieses Repositories. Sie dürfen als externe Produktoption beschrieben, aber nicht als freigegebene Implementierungsabhängigkeit dargestellt werden, solange konkrete Komponente, Version, Lizenz und Betriebsbedingungen nicht separat geprüft und dokumentiert sind.
 
-Ein späterer Einsatz ist nur sinnvoll, wenn:
+### H. TensorRT-LLM – Open-Source-Option für Inferenz
 
-- erforderliche NVIDIA-Entitlements und Betriebsbedingungen geklärt sind;
-- die Lösung vollständig in der erlaubten Kundenumgebung betrieben werden kann;
-- Tenant-Isolation und Administratorzugriff geprüft sind;
-- die Microservice-API alle lokalen Policy- und Provenienzanforderungen durchsetzt;
-- kein proprietärer Trainingsdatensatz in einen unzulässigen zentralen Dienst gelangt.
+[TensorRT-LLM](https://docs.nvidia.com/tensorrt-llm/) kann später Latenz und Durchsatz verbessern. Es löst weder Datenrechte noch Training oder Federation. Eine getrennte Implementierung nimmt es erst nach erfolgreichem Qualitäts- und Leakage-Nachweis sowie Prüfung der konkreten Release-Lizenz auf.
 
-### H. TensorRT-LLM oder NIM – erst für die Inferenzoptimierung
-
-[TensorRT-LLM](https://docs.nvidia.com/tensorrt-llm/) oder ein geeignetes NVIDIA NIM kann später Latenz, Durchsatz und reproduzierbares Deployment verbessern. Diese Komponenten lösen weder Datenrechte noch Training oder Federation. Sie werden erst nach erfolgreichem Qualitäts- und Leakage-Nachweis aufgenommen.
+NVIDIA NIM ist von der strikten Open-Source-Baseline ausgeschlossen, weil seine Nutzung NVIDIA-Produktbedingungen unterliegt. Es darf zum Vergleich erwähnt werden, ist aber keine freigegebene Standardabhängigkeit dieses Konzepts.
 
 Für den POC genügt zunächst eine einfache lokale Inferenz, sofern sie dasselbe Base Model und die getesteten Adapter korrekt lädt.
 
@@ -635,8 +640,9 @@ Für den POC genügt zunächst eine einfache lokale Inferenz, sofern sie dasselb
 | NeMo Evaluator | reproduzierbare Evaluation | ja | ja |
 | NeMo RL | DPO/RL-basiertes Post-Training | nein, zunächst vorbereiten | optional |
 | NeMo Framework/Megatron Core | sehr großes oder verteiltes Training | nein | bei Skalierungsbedarf |
-| NeMo Microservices | verwaltete Produktplattform | nein | optional nach Governance-Prüfung |
-| TensorRT-LLM/NIM | Inferenzoptimierung und Serving | nein | nach erfolgreichem Modellnachweis |
+| NeMo Microservices | externe Produktoption | ausgeschlossen | nur nach separater Lizenzentscheidung |
+| TensorRT-LLM | Open-Source-Inferenzoptimierung | nein | nach Modell- und Lizenzprüfung |
+| NVIDIA NIM | externe Produktoption | ausgeschlossen | nur nach separater Lizenzentscheidung |
 
 ### Empfohlener minimaler Technologie-Stack
 
@@ -683,7 +689,6 @@ inference:
   poc: simple_local_runtime
   production_candidate:
     - TensorRT-LLM
-    - NVIDIA NIM
 ```
 
 ### Entscheidung zum Basismodell
@@ -842,7 +847,9 @@ Das Bestehen definierter Leakage-Tests beweist nicht die vollständige Abwesenhe
 
 ---
 
-## 15. Implementierungsphasen
+## 15. Workflow-Blueprint für eine getrennte Implementierung
+
+Die Phasen sind eine prüfbare Workflow-Beschreibung und keine Erlaubnis, POC- oder Kundenarbeit in diesem Repository auszuführen.
 
 ### Phase 0 – Discovery und Architekturentscheidungen
 
@@ -937,9 +944,9 @@ Nur nach erfolgreichem Kunden-Lab und separater Freigabe:
 
 ---
 
-## 16. Vorgeschlagene Repository-Struktur
+## 16. Vorgeschlagene Struktur eines getrennten POC-Repositories
 
-Codex darf dieses Single-File-Briefing später erweitern:
+Diese Implementierungsstruktur darf nicht in diesem Repository angelegt werden. Ein separat freigegebenes privates POC-Repository kann verwenden:
 
 ```text
 .
@@ -1097,15 +1104,15 @@ Diese Quellen sind Startpunkte und ersetzen keine technische, lizenzrechtliche o
 
 ---
 
-## 21. Erster Prompt an Codex
+## 21. Erster Prompt an Codex in diesem Repository
 
 Konservativer Start:
 
-> Lies `README.md` vollständig und behandle sie als verbindliches Projektbriefing. Antworte und dokumentiere ausschließlich auf Deutsch. Beginne nur mit Phase 0. Prüfe Repository und lokale Umgebung, recherchiere aktuelle offizielle Primärquellen und erstelle einen konkreten POC-Plan. Verwende keine echten Kunden-Repositories, greife nicht auf externe Unternehmenssysteme zu, akzeptiere keine Modelllizenz und erzeuge keine Kosten. Empfiehl einen kleinen vertikalen Migrationsschnitt und nenne anschließend die Entscheidungen, die du von mir vor Phase 1 benötigst.
+> Lies `README.md`, `PUBLICATION_POLICY.md` und `CONTRIBUTING.md` vollständig. Antworte und dokumentiere ausschließlich auf Deutsch. Aktualisiere nur die öffentliche Referenzarchitektur: prüfe Primärquellen, Werkzeuglizenzen, Workflow-Beschreibungen, Risiken und GitHub-renderbare Visuals. Ergänze oder starte keinen POC, keine Kundeninhalte, Datensätze, Modellartefakte, Deployment-Konfiguration oder kopierten Drittinhalt. Führe das Publication Gate aus und dokumentiere jede wesentliche Quelle und Annahme.
 
-Wenn die synthetische Umsetzung bereits freigegeben ist:
+Für einen Vorschlag zu einem getrennten POC, ohne ihn hier umzusetzen:
 
-> Lies `README.md` vollständig. Antworte und dokumentiere ausschließlich auf Deutsch. Setze Phase 0 und Phase 1 mit synthetischen Daten um. Erzeuge drei getrennte Beispiel-Repositories für COBOL/JCL, PL/SQL und eine Oracle-Forms-nahe Repräsentation. Implementiere zuerst Default-Deny, Provenienz und negative Cross-Customer-Zugriffstests. Stoppe vor externem Zugriff, kostenpflichtigen Ressourcen, echten Daten und lizenzpflichtigen Modelldownloads. Führe alle Tests aus und dokumentiere Annahmen und Grenzen.
+> Lies alle Governance-Dateien. Entwirf einen eigenständigen Plan für ein neues privates POC-Repository mit ausschließlich synthetischen Daten. Beschreibe Freigaben, Lizenzen, Isolationstests, Leakage-Tests, Exit-Kriterien und Repository-Grenzen. Lege in diesem öffentlichen Referenz-Repository keine Implementierungsdateien an und starte kein Training.
 
 ---
 
