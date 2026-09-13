@@ -1,6 +1,6 @@
 # Federated Coding für Legacy-Modernisierung
 
-[Überblick](README.md) · [Architektur](../docs/de/architecture.md) · [Deployment](../docs/de/deployment.md) · [Workflow](../docs/de/workflow.md) · [Toolchain](../docs/de/toolchain.md) · [Governance](../docs/de/governance.md) · [English](../README.md)
+[Überblick](README.md) · [Architektur](../docs/de/architecture.md) · [Deployment](../docs/de/deployment.md) · [Sizing](../docs/de/sizing.md) · [Workflow](../docs/de/workflow.md) · [Toolchain](../docs/de/toolchain.md) · [Governance](../docs/de/governance.md) · [English](../README.md)
 
 > Unabhängige explorative Referenzarchitektur. Kein offizielles NVIDIA-Produkt, keine Rechtsberatung, keine Kundenimplementierung und keine Produktionsfreigabe.
 
@@ -53,9 +53,9 @@ Nicht enthalten sind Kunden-Repositories, Quellcode, Datensätze, Modellgewichte
 ```mermaid
 flowchart TD
     A["Repository-Analyse"] --> B["RAG und Werkzeuge"]
-    B --> C["Privater Adapter"]
-    C --> D["Föderierter Adapter"]
-    D --> E["Verifier-gesteuertes Post-Training"]
+    B --> C["Privates Adapter-Post-Training"]
+    C --> D["Föderiertes Adapter-Post-Training"]
+    D --> E["Preference- oder Verifier-gesteuertes Post-Training"]
 ```
 
 Eine Stufe wird nur fortgeführt, wenn sie die vorherige bei Migrationsqualität, Sicherheit, Provenienz und Kosten übertrifft.
@@ -64,9 +64,10 @@ Eine Stufe wird nur fortgeführt, wenn sie die vorherige bei Migrationsqualität
 
 1. [Architektur](../docs/de/architecture.md)
 2. [Deployment](../docs/de/deployment.md)
-3. [Workflow](../docs/de/workflow.md)
-4. [Toolchain](../docs/de/toolchain.md)
-5. [Governance](../docs/de/governance.md)
+3. [Sizing](../docs/de/sizing.md)
+4. [Workflow](../docs/de/workflow.md)
+5. [Toolchain](../docs/de/toolchain.md)
+6. [Governance](../docs/de/governance.md)
 
 ## Status
 

@@ -1,16 +1,16 @@
 # Toolchain
 
-[Overview](../../README.md) · [Architecture](architecture.md) · [Deployment](deployment.md) · [Workflow](workflow.md) · [Toolchain](toolchain.md) · [Governance](governance.md) · [Deutsch](../de/toolchain.md)
+[Overview](../../README.md) · [Architecture](architecture.md) · [Deployment](deployment.md) · [Sizing](sizing.md) · [Workflow](workflow.md) · [Toolchain](toolchain.md) · [Governance](governance.md) · [Deutsch](../de/toolchain.md)
 
 ## Recommended open-source-oriented stack
 
 | Layer | Candidate | Role | Position |
 |---|---|---|---|
 | Code preparation | NeMo Curator plus code-specific filters | provenance, deduplication, decontamination | targeted local use |
-| Fine-tuning | NeMo AutoModel | local SFT and LoRA/PEFT | preferred training layer |
-| Federation | NVIDIA FLARE | policy-controlled adapter aggregation | optional after local proof |
+| Post-training: private fine-tuning | NeMo AutoModel | local SFT and LoRA/PEFT | preferred training layer |
+| Post-training: federation | NVIDIA FLARE | policy-controlled adapter aggregation | optional after local proof |
 | Evaluation | NeMo Evaluator plus compilers and tests | reproducible quality assessment | mandatory combined evidence |
-| Post-training | NeMo RL | preference or verifier-guided learning | later stage only |
+| Post-training: preference/RL | NeMo RL | preference or verifier-guided learning | later stage only |
 | Scale-up | NeMo Framework / Megatron Core | large or distributed training | only after measured need |
 | Inference | TensorRT-LLM | optional local optimisation | after model validation |
 
