@@ -1,62 +1,75 @@
-# Agentenanweisungen
+# Agent instructions
 
-Diese Anweisungen gelten für das gesamte Repository. Sie stehen bewusst außerhalb der für Executives bestimmten `README.md`.
+These instructions apply to the entire repository. They are deliberately kept outside the executive-facing `README.md`.
 
-## Sprache
+## Language
 
-Alle Ausgaben von Agents erfolgen auf Deutsch, auch wenn der Benutzer auf Englisch schreibt. Das gilt für Pläne, Rückfragen, Erläuterungen, Dokumentation, Reports, Commit-Nachrichten, Issues und Pull Requests. Quellcode, technische Bezeichner und etablierte englische Fachbegriffe dürfen englisch bleiben.
+User input may be in any language. English is the leading and canonical output language for both repositories. Normal agent responses, plans, reports, commit messages, issues, and pull requests use English unless the user explicitly asks for another language in the conversation.
 
-## Zweck des Repositories
+Public presentation content follows two controlled, monolingual paths:
 
-Dies ist eine öffentliche, reine Dokumentations-Referenzarchitektur und GitHub-native Präsentation. Pflege die Darstellung von Werkzeugen, Workflows, Entscheidungen, Risiken und Evidenz. Verwandle das Repository nicht in ein Implementierungs-Repository.
+- English: `README.md` and `docs/en/`
+- German: `de/README.md` and `docs/de/`
 
-## Pflichtlektüre
+Every material presentation change updates both language paths in the same commit. The two paths use the same information architecture, navigation order, diagrams, decisions, and semantic content. Do not create bilingual body text. A compact language-switch link is permitted. English resolves ambiguity and is updated first; German is a faithful branch, not an independent concept.
 
-Vor jeder Änderung sind zu lesen:
+Top-level governance files are canonical English. German reader-facing translations live under `de/`. Machine-facing configuration and code remain language-neutral where practical.
+
+The `Federated` and `FederatedCoding` repositories may share structure and governance while that saves work. They are allowed to diverge when their partner-specific concepts require it; cross-repository synchronisation is not a permanent requirement. Language-path synchronisation inside each repository remains required.
+
+## Repository purpose
+
+This is a public, documentation-only reference architecture and GitHub-native presentation. Maintain its explanation of tools, workflows, decisions, risks, and evidence. Do not turn it into an implementation repository.
+
+## Required reading
+
+Before changing the repository, read:
 
 1. `README.md`
 2. `PUBLICATION_POLICY.md`
 3. `OPEN_SOURCE_BASELINE.md`
 4. `CONTRIBUTING.md`
 5. `THIRD_PARTY_NOTICES.md`
+6. the corresponding English and German presentation pages affected by the change
 
-## Arbeitsregeln
+## Operating rules
 
-- Nur Markdown, Mermaid, eigene Visuals oder kleine synthetische nicht operative Fragmente ergänzen, die die Veröffentlichungs-Policy erlaubt.
-- Niemals Kunden-, Mandats-, Arbeitgeber-, Partner-, Personen-, vertrauliche, privilegierte oder produktive Inhalte aufnehmen oder verarbeiten.
-- Keine Datensätze, Quellcode-Repositories, Modellgewichte, Adapter, Checkpoints, Embeddings, Prompts oder Outputs aus Mandaten, Trainingsläufe, ausführbaren POCs, Zugangsdaten, Deployment-Konfigurationen oder Kunden-Deliverables aufnehmen.
-- Open-Source-Werkzeuge mit kanonischem Link und verifizierter Lizenz referenzieren; ihren Code hier nicht übernehmen.
-- Öffentliche Abrufbarkeit, herunterladbare Gewichte und Source Availability gelten nicht als ausreichender Nachweis einer Open-Source-Lizenz.
-- Für technische Aussagen offizielle Primärquellen verwenden und bei Implementierungsempfehlungen genaue Versionen dokumentieren.
-- NVIDIA NIM und NeMo Microservices nicht als Bestandteil der strikten Open-Source-Baseline darstellen.
-- Nicht behaupten, Federated Learning oder Open Source beseitige Urheberrechts-, Kartellrechts-, Vertraulichkeits-, Datenschutz-, Geschäftsgeheimnis-, Vertrags- oder Sicherheitsrisiken.
-- GitHub bleibt Single Source of Truth. Nur GitHub-renderbares Markdown, Mermaid, SVG oder geprüfte Rastergrafiken verwenden; keine PDF- oder PowerPoint-Deliverables einführen.
-- Änderungen klein, prüfbar und reversibel halten. Die `README.md` bleibt executive-tauglich; Agentenmechanik und Contribution Controls gehören in die dafür vorgesehenen Dateien.
-- Übernommene externe Textfragmente oder Assets vor dem Merge in `THIRD_PARTY_NOTICES.md` dokumentieren.
-- Nach jeder Änderung `python scripts/check_public_content.py` ausführen. Ein bestandener Scan ersetzt niemals das menschliche Review von Provenienz, Lizenz, Vertraulichkeit, Datenschutz und Markenrechten.
+- Add only Markdown, Mermaid, project-owned visuals, or small synthetic non-operational fragments permitted by the publication policy.
+- Never add or process client, engagement, employer, partner, personal, confidential, privileged, or production material.
+- Never add datasets, source repositories, model weights, adapters, checkpoints, embeddings, prompts or outputs from engagements, training runs, executable POCs, credentials, deployment configuration, or customer deliverables.
+- Reference open-source tools by canonical link and verified licence; do not vendor their code here.
+- Treat public availability, downloadable weights, and source availability as insufficient evidence of an open-source licence.
+- Use official primary sources for technical claims and record exact versions when recommending implementation dependencies.
+- Do not describe NVIDIA NIM or NeMo Microservices as part of the strict open-source baseline.
+- Do not claim that federated learning or open source eliminates copyright, competition, confidentiality, privacy, trade-secret, contractual, or security risk.
+- Keep GitHub as the single source of truth and use GitHub-renderable Markdown, Mermaid, SVG, or reviewed raster visuals. Do not introduce PDF or PowerPoint deliverables.
+- Keep changes small, reviewable, and reversible. Preserve an executive-readable narrative in `README.md`; put agent mechanics and contribution controls in their dedicated files.
+- Keep the English and German presentation navigation structurally identical and verify every relative link.
+- Record incorporated external excerpts or assets in `THIRD_PARTY_NOTICES.md` before merge.
+- Run `python scripts/check_public_content.py` after every change. A passing scan never replaces human provenance, licence, confidentiality, privacy, and trademark review.
 
-## Stop-Bedingungen
+## Stop conditions
 
-Vor Zugriff auf echte Tenants, Repositories oder Kundenumgebungen, Akzeptieren modellspezifischer Bedingungen, Verwendung nicht öffentlicher Inhalte, Kosten, Infrastruktur-Deployment oder Anlage eines getrennten Implementierungs-Repositories anhalten und ausdrückliche Freigabe anfordern.
+Stop and request explicit approval before accessing a real tenant, repository, or customer environment; accepting model-specific terms; using non-public material; incurring cost; deploying infrastructure; or creating a separate implementation repository.
 
-Jeder POC und jede Kundenimplementierung benötigt ein getrenntes, ausdrücklich freigegebenes privates Repository und eine isolierte Umgebung. Nur geprüfte, bereinigte und nicht kundenspezifische Erkenntnisse dürfen hierher zurückfließen.
+Any POC or customer implementation must live in a separate, explicitly approved private repository and isolated environment. Only reviewed, sanitised, non-client-specific findings may return here.
 
-## Dokumentationsworkflow
+## Documentation workflow
 
-1. Aktuellen Repository-Stand und Governance-Dateien prüfen.
-2. Zeitabhängige Technik- und Lizenzaussagen anhand von Primärquellen verifizieren.
-3. Nur die kleinste zusammenhängende Dokumentationseinheit aktualisieren.
-4. Kompakte Diagramme und Tabellen verwenden, wenn sie das Verständnis wesentlich verbessern.
-5. Publication Gate ausführen.
-6. Geänderte Dateien, Quellen, Annahmen und Restrisiken dokumentieren.
+1. Inspect the current repository and applicable governance files.
+2. Verify time-sensitive technical and licence claims against primary sources.
+3. Update the smallest coherent documentation unit.
+4. Prefer compact diagrams and tables when they materially improve understanding.
+5. Run the publication gate.
+6. Report the changed files, sources, assumptions, and residual risks.
 
-## Empfohlene Agenten-Prompts
+## Suggested agent prompts
 
-Für eine Dokumentationsaktualisierung:
+For a documentation update:
 
-> Aktualisiere nur die öffentliche Referenzarchitektur. Prüfe Primärquellen, Werkzeuglizenzen, Workflow-Beschreibungen, Risiken und GitHub-renderbare Visuals. Ergänze oder starte keinen POC, keine Kundeninhalte, Datensätze, Modellartefakte, Deployment-Konfiguration oder kopierten Drittinhalt. Führe das Publication Gate aus und dokumentiere jede wesentliche Quelle und Annahme.
+> Update only the public reference architecture. Verify primary-source links, tool licences, workflow descriptions, risks, and GitHub-renderable visuals. Do not add or run a POC, customer material, datasets, model artefacts, deployment configuration, or copied third-party content. Run the publication gate and report every material source and assumption.
 
-Für einen getrennten POC-Vorschlag:
+For a separate POC proposal:
 
-> Entwirf einen eigenständigen Plan für ein neues privates POC-Repository mit ausschließlich synthetischen Daten. Beschreibe Freigaben, Lizenzen, Isolationstests, Leakage-Tests, Exit-Kriterien und Repository-Grenzen. Lege in diesem öffentlichen Referenz-Repository keine Implementierungsdateien an und starte kein Training.
+> Draft a self-contained plan for a new private POC repository using synthetic data only. Include approvals, licences, isolation tests, leakage tests, exit criteria, and repository boundaries. Do not create implementation files or execute training in this public reference repository.
 

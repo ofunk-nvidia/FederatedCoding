@@ -1,10 +1,11 @@
-# Drittanbieterhinweise und freigegebene Quellen
+# Third-Party Notices and Approved Sources
 
-Dieses Repository enthält derzeit keinen übernommenen Drittcode, Datensatz, Modellgewichte, Adapter, kopierte Visuals oder Dokumentationsauszüge. Drittwerkzeuge werden nur verlinkt und nicht übernommen.
+No third-party code, dataset, model weights, adapter, copied visual, or documentation excerpt is currently included in this repository. Third-party tools are referenced by links only and are not vendored.
 
-Jedes externe Textfragment oder Asset wird eingetragen, bevor sein Inhalt in das Repository gelangt:
+Add each external excerpt or asset before its content enters the repository:
 
-| Quelle | Unveränderliche Version | Lizenz | Dateien oder Verwendung | Änderungen | Erforderlicher Hinweis | Reviewer | Prüfdatum |
+| Source | Immutable version | Licence | Files or use | Modifications | Required notice | Reviewer | Review date |
 |---|---|---|---|---|---|---|---|
 
-Links in erläuternder Dokumentation bedeuten nicht automatisch, dass verlinkte Inhalte übernommen, als Abhängigkeit freigegeben oder als Trainingsdaten zugelassen sind.
+Links in explanatory documentation do not by themselves mean that linked content is incorporated, approved as a dependency, or approved as training data.
+
