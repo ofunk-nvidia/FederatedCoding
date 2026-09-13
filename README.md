@@ -4,7 +4,7 @@
 
 **Version:** 0.1  
 **Stand:** 13. September 2026  
-**Status:** Konzept- und POC-Spezifikation; nicht für produktive Kunden-Repositories freigegeben  
+**Status:** Öffentliche Referenzarchitektur; reine Dokumentation; keine Kundenprojektausführung  
 **Beispielziel:** Migration von COBOL, JCL, Copybooks, PL/SQL und Oracle Forms nach Java oder eine andere freigegebene Zielarchitektur  
 **Technische Hypothese:** Lokaler Code-Kontext + verifizierbare Transformation + optionales föderiertes Lernen mit NVIDIA FLARE
 
