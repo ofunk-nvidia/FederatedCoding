@@ -12,51 +12,19 @@
 
 ---
 
-## 0. Verbindlicher Arbeitsauftrag an Codex
+## Zweck
 
-Lies diese Datei vollständig, bevor du Änderungen vornimmst. Behandle sie als maßgebliche Projektbeschreibung.
+Diese öffentliche, GitHub-native Referenzarchitektur erklärt Werkzeuge, Kontrollen, Entscheidungen und Workflows für einen separat freizugebenden Proof of Concept zur kundenzentrierten Modernisierung proprietärer Legacy-Software. Der Blueprint zeigt, wie ein KI-Coding-System ein kundenspezifisches System verstehen, transformieren und verifizieren könnte, ohne Quellcode oder daraus rekonstruierbares Kundenwissen in ein fremdes oder gemeinsames Modell zu übertragen.
 
-### Sprachregel
-
-**Alle Ausgaben von Codex müssen auf Deutsch erfolgen, auch wenn einzelne Quellen, Bibliotheken, Fehlermeldungen oder Benutzeranweisungen auf Englisch sind.** Das gilt für Pläne, Rückfragen, Erläuterungen, Dokumentation, Issues und Pull Requests. Quellcode, technische Bezeichner und etablierte englische Fachbegriffe dürfen englisch bleiben. Code-Kommentare sollen deutsch sein, sofern Projektkonventionen oder Fremdcode nichts anderes verlangen.
-
-### Mission
-
-Pflege eine öffentliche, GitHub-native Referenzarchitektur, die Werkzeuge, Kontrollen, Entscheidungen und Workflows für einen separat freizugebenden Proof of Concept zur kundenzentrierten Modernisierung proprietärer Legacy-Software erklärt. Der Blueprint zeigt, wie ein KI-Coding-System ein kundenspezifisches System verstehen, transformieren und verifizieren könnte, ohne Quellcode oder daraus rekonstruierbares Kundenwissen in ein fremdes oder gemeinsames Modell zu übertragen.
-
-### Repository-Geltungsbereich
+## Repository-Geltungsbereich
 
 Dieses Repository ist Single Source of Truth und Präsentationsschicht für das Konzept. Es enthält ausschließlich Dokumentation, Mermaid-Diagramme, Entscheidungsprotokolle, Quellenlinks sowie kleine synthetische Pseudocode- oder Konfigurationsfragmente.
 
-Es darf niemals Kundenprojekte ausführen oder Kunden-Repositories, Datensätze, Prompts oder Outputs, Modellgewichte, Adapter, Checkpoints, Zugangsdaten, Produktivkonfigurationen, Deployments oder Trainingsläufe aufnehmen. Jeder POC und jede Kundenimplementierung benötigt ein getrenntes, ausdrücklich freigegebenes privates Repository und eine isolierte Umgebung. Hier dürfen nur geprüfte, bereinigte und nicht kundenspezifische Erkenntnisse zusammengefasst werden.
+Kundenprojekte, Kunden-Repositories, Datensätze, Prompts oder Outputs, Modellgewichte, Adapter, Checkpoints, Zugangsdaten, Produktivkonfigurationen, Deployments und Trainingsläufe liegen außerhalb seines Geltungsbereichs. Jeder POC und jede Kundenimplementierung gehört in ein getrenntes, ausdrücklich freigegebenes privates Repository und eine isolierte Umgebung. Für dieses Repository eignen sich ausschließlich geprüfte, bereinigte und nicht kundenspezifische Erkenntnisse.
 
 Der erste POC verwendet ausschließlich synthetische oder eindeutig freigegebene Beispiel-Repositories. Er greift nicht auf echte Kunden-Repositories, Produktivdatenbanken, Unternehmensnetzwerke oder kostenpflichtige Cloud-Ressourcen zu.
 
-Die folgenden Phasen beschreiben den Workflow für ein getrenntes Implementierungs-Repository; sie autorisieren keine Umsetzung in diesem Repository:
-
-1. Prüfe Repository, Git-Status, Entwicklungsumgebung, Python-, Java- und Container-Unterstützung sowie verfügbare CPU-/GPU-Ressourcen.
-2. Validiere aktuelle offizielle Primärquellen zu NVFLARE, PEFT/LoRA, den gewählten Parsern, Compilern und Ziel-Frameworks.
-3. Erstelle einen konkreten Implementierungsplan mit Annahmen, Entscheidungen, Risiken und Abbruchkriterien.
-4. Baue zuerst eine deterministische Analyse- und Verifikationspipeline ohne Modelltraining.
-5. Ergänze anschließend ein lokales Basismodell mit Repository-RAG und Code-Graph.
-6. Prüfe privaten Adapter und föderierten Adapter als getrennte, optionale Stufen.
-7. Implementiere Isolation-, Lizenz-, Leakage-, Ähnlichkeits-, Qualitäts- und Regressionstests.
-8. Stoppe vor Zugriff auf reale Repositories, vor dem Einsatz echter Kundendaten, vor externem Deployment, vor kostenpflichtigen Ressourcen und vor Modell-Downloads mit zustimmungspflichtiger Lizenz. Benenne die erforderliche Freigabe.
-
-### Nicht verhandelbare Regeln
-
-- Kein echter proprietärer Code im ersten POC.
-- Keine Secrets, Tokens, Zertifikate, Passwörter, Connection Strings oder produktiven Konfigurationen in Git, Logs oder Prompts.
-- Kein Versand vollständiger Quelldateien, Codeausschnitte, ASTs, Embeddings, Symboltabellen oder individueller Modellupdates an eine zentrale Instanz ohne explizite Policy-Freigabe.
-- Kein Training auf einem Repository nur deshalb, weil ein Berater oder Tool es technisch lesen kann.
-- Keine Behauptung, Modellgewichte seien automatisch urheberrechtlich neutral oder frei von Geschäftsgeheimnissen.
-- Kein ungeprüftes Ersetzen eines produktiven Systems durch generierten Code.
-- Jede Migration benötigt ausführbare Tests, statische Prüfungen, menschliche Freigabe und nachvollziehbare Herkunft.
-- Unklare Rechte oder Herkunft führen zu `DENY`, nicht zu stillschweigender Nutzung.
-- Alle Abhängigkeiten, Modelle, Trainingsdaten und generierten Artefakte müssen eine maschinenlesbare Provenienz besitzen.
-- Vor jeder Aufnahme einer Quelle, eines Datensatzes, Modells, generierten Artefakts, Benchmark-Ergebnisses oder Visuals gilt [PUBLICATION_POLICY.md](PUBLICATION_POLICY.md). Öffentliche Abrufbarkeit ist keine Open-Source-Lizenz.
-- [OPEN_SOURCE_BASELINE.md](OPEN_SOURCE_BASELINE.md) ist das Zulassungsregister für Werkzeuge; vor jeder Empfehlung ist die konkrete Version zu prüfen.
-- Jeder Pull Request muss vor dem Merge das automatisierte Publication Gate und eine menschliche Provenienzprüfung bestehen.
+Anweisungen für Codex und Contributors sind bewusst von dieser Executive-Darstellung getrennt. Sie stehen in [AGENTS.md](AGENTS.md), [PUBLICATION_POLICY.md](PUBLICATION_POLICY.md) und [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ---
 
@@ -391,7 +359,7 @@ Zu analysieren sind unter anderem:
 - Scheduler Jobs;
 - Abhängigkeiten zu Java, Forms, Reports und externen Systemen.
 
-Eine Migration kann unterschiedliche Ziele haben: Java-Service, SQL-basierte Zielplattform, beibehaltene Datenbanklogik oder schrittweise Entkopplung. Codex darf das Ziel nicht ohne Architekturentscheidung festlegen.
+Eine Migration kann unterschiedliche Ziele haben: Java-Service, SQL-basierte Zielplattform, beibehaltene Datenbanklogik oder schrittweise Entkopplung. Das Ziel benötigt eine explizite Architekturentscheidung.
 
 ### 9.3 Oracle Forms und Reports
 
@@ -693,7 +661,7 @@ inference:
 
 ### Entscheidung zum Basismodell
 
-Die NVIDIA-Toolchain wird festgelegt, bevor ein konkretes Basismodell festgeschrieben wird. Codex soll zwei bis drei lokal betreibbare Code-Modelle anhand eines kleinen Legacy-Migrationsbenchmarks vergleichen.
+Die NVIDIA-Toolchain wird festgelegt, bevor ein konkretes Basismodell festgeschrieben wird. Für einen getrennten POC ist ein Vergleich von zwei bis drei lokal betreibbaren Code-Modellen anhand eines kleinen Legacy-Migrationsbenchmarks vorgesehen.
 
 Pflichtkriterien:
 
@@ -1041,7 +1009,7 @@ Jeder generierte Zielcode-Patch benötigt:
 
 ## 18. Offene Entscheidungen
 
-Codex darf diese Punkte nicht stillschweigend festlegen:
+Die folgenden Punkte benötigen eine explizite Entscheidung der jeweils verantwortlichen Rolle:
 
 1. Welcher konkrete Legacy-Dialekt wird zuerst unterstützt?
 2. Ist das erste Ziel Java, Kotlin, C#, eine modernisierte Datenbanklogik oder etwas anderes?
@@ -1104,19 +1072,7 @@ Diese Quellen sind Startpunkte und ersetzen keine technische, lizenzrechtliche o
 
 ---
 
-## 21. Erster Prompt an Codex in diesem Repository
-
-Konservativer Start:
-
-> Lies `README.md`, `PUBLICATION_POLICY.md` und `CONTRIBUTING.md` vollständig. Antworte und dokumentiere ausschließlich auf Deutsch. Aktualisiere nur die öffentliche Referenzarchitektur: prüfe Primärquellen, Werkzeuglizenzen, Workflow-Beschreibungen, Risiken und GitHub-renderbare Visuals. Ergänze oder starte keinen POC, keine Kundeninhalte, Datensätze, Modellartefakte, Deployment-Konfiguration oder kopierten Drittinhalt. Führe das Publication Gate aus und dokumentiere jede wesentliche Quelle und Annahme.
-
-Für einen Vorschlag zu einem getrennten POC, ohne ihn hier umzusetzen:
-
-> Lies alle Governance-Dateien. Entwirf einen eigenständigen Plan für ein neues privates POC-Repository mit ausschließlich synthetischen Daten. Beschreibe Freigaben, Lizenzen, Isolationstests, Leakage-Tests, Exit-Kriterien und Repository-Grenzen. Lege in diesem öffentlichen Referenz-Repository keine Implementierungsdateien an und starte kein Training.
-
----
-
-## 22. Kernentscheidung
+## 21. Kernentscheidung
 
 Das Projekt baut nicht einfach ein mit proprietärem Code trainiertes Gemeinschaftsmodell. Es baut eine **kundenzentrierte, verifizierbare Modernisierungsumgebung**.
 
