@@ -1,6 +1,6 @@
 # Workflow
 
-[Overview](../../README.md) · [Architecture](architecture.md) · [Deployment](deployment.md) · [Workflow](workflow.md) · [Toolchain](toolchain.md) · [Governance](governance.md) · [Deutsch](../de/workflow.md)
+[Overview](../../README.md) · [Architecture](architecture.md) · [Deployment](deployment.md) · [Sizing](sizing.md) · [Workflow](workflow.md) · [Toolchain](toolchain.md) · [Governance](governance.md) · [Deutsch](../de/workflow.md)
 
 ## Migration lifecycle
 
@@ -20,9 +20,11 @@ flowchart TD
 |---|---|---|
 | 0 | deterministic inventory, parsing, and graphs | coverage and correctness |
 | 1 | local RAG and tool use | grounded answers and bounded changes |
-| 2 | private LoRA adapter | measurable gain over RAG-only |
-| 3 | federated migration adapter | cross-site gain without prohibited leakage |
-| 4 | preference or RL post-training | robust verifier and anti-gaming evidence |
+| 2 | private LoRA adapter post-training | measurable gain over RAG-only |
+| 3 | federated adapter post-training | cross-site gain without prohibited leakage |
+| 4 | preference- or RL-based post-training | robust verifier and anti-gaming evidence |
+
+Stages 2–4 are all forms of post-training because they change adapter or model weights. Stages 0–1 analyse or retrieve code without changing weights. [Sizing](sizing.md) separates source-estate scale from model, training and inference capacity.
 
 ## Vertical slice
 

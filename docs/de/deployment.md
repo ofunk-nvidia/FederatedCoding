@@ -1,6 +1,6 @@
 # Deployment-Design
 
-[Überblick](../../de/README.md) · [Architektur](architecture.md) · [Deployment](deployment.md) · [Workflow](workflow.md) · [Toolchain](toolchain.md) · [Governance](governance.md) · [English](../en/deployment.md)
+[Überblick](../../de/README.md) · [Architektur](architecture.md) · [Deployment](deployment.md) · [Sizing](sizing.md) · [Workflow](workflow.md) · [Toolchain](toolchain.md) · [Governance](governance.md) · [English](../en/deployment.md)
 
 ## Status und Umfang
 
@@ -58,6 +58,8 @@ Die fünf Zonen können VLANs, virtuelle Netze, VM Security Groups, Kubernetes N
 | Größerer Pilot | 64–128 Cores, 512 GB–1 TB RAM | 2–4 freigegebene GPUs mit je 48–80 GB VRAM | 8–20 TB resiliente NVMe | 10/25 GbE | größerer Kontext, paralleles Parsing, Evaluation und kontrolliertes Training |
 
 Vorzusehen sind TPM 2.0 oder ein freigegebener Hardware Key Store, Secure Boot soweit unterstützt, redundante Stromversorgung, Out-of-Band-Management in einem getrennten Administrationsnetz und verschlüsseltes Backup. Die GPU-Anzahl ergibt sich aus gemessenem Modellbedarf, Kontextlänge, Quantisierung, Adapterrang und Parallelität. Keine Modellgrößenangabe ist eine Beschaffungsgarantie.
+
+Das [Sizing- und Performance-Modell](sizing.md) rechnet 1, 10, 20 und 50 MLOC in Token- und Chunkbereiche um, trennt Kapazitätstreiber nach Systemrolle und definiert das vor einer Beschaffung erforderliche Benchmark Gate.
 
 ## Referenzzuordnung der Software
 

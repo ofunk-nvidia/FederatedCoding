@@ -1,6 +1,6 @@
 # Deployment design
 
-[Overview](../../README.md) · [Architecture](architecture.md) · [Deployment](deployment.md) · [Workflow](workflow.md) · [Toolchain](toolchain.md) · [Governance](governance.md) · [Deutsch](../de/deployment.md)
+[Overview](../../README.md) · [Architecture](architecture.md) · [Deployment](deployment.md) · [Sizing](sizing.md) · [Workflow](workflow.md) · [Toolchain](toolchain.md) · [Governance](governance.md) · [Deutsch](../de/deployment.md)
 
 ## Status and scope
 
@@ -58,6 +58,8 @@ The five zones may be VLANs, virtual networks, VM security groups, Kubernetes ne
 | larger pilot | 64–128 cores, 512 GB–1 TB RAM | 2–4 approved GPUs with 48–80 GB VRAM each | 8–20 TB resilient NVMe | 10/25 GbE | larger context, concurrent parsing, evaluation and controlled training |
 
 Include TPM 2.0 or an approved hardware key store, secure boot where supported, redundant power, out-of-band management on a separate administrative network, and encrypted backup. GPU count is driven by measured model footprint, context length, quantisation, adapter rank and concurrency. No model-size claim is a procurement guarantee.
+
+The [sizing and performance model](sizing.md) converts 1, 10, 20 and 50 MLOC into token and chunk ranges, separates per-system capacity drivers, and defines the benchmark gate required before procurement.
 
 ## Reference software allocation
 

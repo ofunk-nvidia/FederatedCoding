@@ -40,6 +40,7 @@ PRESENTATION_PAIRS = (
     ("README.md", "de/README.md"),
     ("docs/en/architecture.md", "docs/de/architecture.md"),
     ("docs/en/deployment.md", "docs/de/deployment.md"),
+    ("docs/en/sizing.md", "docs/de/sizing.md"),
     ("docs/en/workflow.md", "docs/de/workflow.md"),
     ("docs/en/toolchain.md", "docs/de/toolchain.md"),
     ("docs/en/governance.md", "docs/de/governance.md"),
@@ -86,7 +87,11 @@ def pruefe_sprachpfade(fehler: list[str]) -> None:
         german = german_path.read_text(encoding="utf-8")
         english_nav = next((line for line in english.splitlines()[:8] if line.startswith("[")), "")
         german_nav = next((line for line in german.splitlines()[:8] if line.startswith("[")), "")
-        if english_nav.count("](") != german_nav.count("](") or english_nav.count("](") != 7:
+        expected_nav_links = 7 if english_name == "SECURITY.md" else 8
+        if (
+            english_nav.count("](") != german_nav.count("](")
+            or english_nav.count("](") != expected_nav_links
+        ):
             fehler.append(f"Navigation weicht ab: {english_name} <-> {german_name}")
         if "Deutsch" not in english_nav or "English" not in german_nav:
             fehler.append(f"Sprachwechsel fehlt: {english_name} <-> {german_name}")

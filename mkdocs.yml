@@ -50,6 +50,7 @@ nav:
       - Overview: README.md
       - Architecture: docs/en/architecture.md
       - Deployment: docs/en/deployment.md
+      - Sizing: docs/en/sizing.md
       - Workflow: docs/en/workflow.md
       - Toolchain: docs/en/toolchain.md
       - Governance:
@@ -63,6 +64,7 @@ nav:
       - Überblick: de/README.md
       - Architektur: docs/de/architecture.md
       - Deployment: docs/de/deployment.md
+      - Sizing: docs/de/sizing.md
       - Workflow: docs/de/workflow.md
       - Toolchain: docs/de/toolchain.md
       - Governance:

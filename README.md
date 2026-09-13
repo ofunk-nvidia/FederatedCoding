@@ -1,6 +1,6 @@
 # Federated Coding for Legacy Modernisation
 
-[Overview](README.md) · [Architecture](docs/en/architecture.md) · [Deployment](docs/en/deployment.md) · [Workflow](docs/en/workflow.md) · [Toolchain](docs/en/toolchain.md) · [Governance](docs/en/governance.md) · [Deutsch](de/README.md)
+[Overview](README.md) · [Architecture](docs/en/architecture.md) · [Deployment](docs/en/deployment.md) · [Sizing](docs/en/sizing.md) · [Workflow](docs/en/workflow.md) · [Toolchain](docs/en/toolchain.md) · [Governance](docs/en/governance.md) · [Deutsch](de/README.md)
 
 > Independent exploratory reference architecture. This is not an official NVIDIA product, legal opinion, customer implementation, or production approval.
 
@@ -53,9 +53,9 @@ It contains no customer repository, source file, dataset, model weight, adapter,
 ```mermaid
 flowchart TD
     A["Repository analysis"] --> B["RAG and tools"]
-    B --> C["Private adapter"]
-    C --> D["Federated adapter"]
-    D --> E["Verifier-guided post-training"]
+    B --> C["Private adapter post-training"]
+    C --> D["Federated adapter post-training"]
+    D --> E["Preference or verifier-guided post-training"]
 ```
 
 Each stage proceeds only if it outperforms the previous stage on migration quality, security, provenance, and cost.
@@ -64,9 +64,10 @@ Each stage proceeds only if it outperforms the previous stage on migration quali
 
 1. [Architecture](docs/en/architecture.md)
 2. [Deployment](docs/en/deployment.md)
-3. [Workflow](docs/en/workflow.md)
-4. [Toolchain](docs/en/toolchain.md)
-5. [Governance](docs/en/governance.md)
+3. [Sizing](docs/en/sizing.md)
+4. [Workflow](docs/en/workflow.md)
+5. [Toolchain](docs/en/toolchain.md)
+6. [Governance](docs/en/governance.md)
 
 Operational instructions are kept outside this executive narrative in [AGENTS.md](AGENTS.md), [PUBLICATION_POLICY.md](PUBLICATION_POLICY.md), and [CONTRIBUTING.md](CONTRIBUTING.md).
 

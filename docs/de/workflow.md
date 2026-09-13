@@ -1,6 +1,6 @@
 # Workflow
 
-[Überblick](../../de/README.md) · [Architektur](architecture.md) · [Deployment](deployment.md) · [Workflow](workflow.md) · [Toolchain](toolchain.md) · [Governance](governance.md) · [English](../en/workflow.md)
+[Überblick](../../de/README.md) · [Architektur](architecture.md) · [Deployment](deployment.md) · [Sizing](sizing.md) · [Workflow](workflow.md) · [Toolchain](toolchain.md) · [Governance](governance.md) · [English](../en/workflow.md)
 
 ## Migrationslebenszyklus
 
@@ -20,9 +20,11 @@ flowchart TD
 |---|---|---|
 | 0 | deterministisches Inventar, Parsing und Graphen | Abdeckung und Korrektheit |
 | 1 | lokales RAG und Tool Use | quellengebundene Antworten und begrenzte Änderungen |
-| 2 | privater LoRA-Adapter | messbarer Gewinn gegenüber RAG-only |
-| 3 | föderierter Migrationsadapter | Cross-Site-Gewinn ohne verbotenes Leakage |
-| 4 | Preference- oder RL-Post-Training | robuster Verifier und Anti-Gaming-Evidenz |
+| 2 | privates LoRA-Adapter-Post-Training | messbarer Gewinn gegenüber RAG-only |
+| 3 | föderiertes Adapter-Post-Training | Cross-Site-Gewinn ohne verbotenes Leakage |
+| 4 | Preference- oder RL-basiertes Post-Training | robuster Verifier und Anti-Gaming-Evidenz |
+
+Die Stufen 2–4 sind sämtlich Formen von Post-Training, weil sie Adapter- oder Modellgewichte verändern. Die Stufen 0–1 analysieren oder laden Code, ohne Gewichte zu verändern. Das [Sizing](sizing.md) trennt die Größe des Quellbestands von Modell-, Trainings- und Inferenzkapazität.
 
 ## Vertikaler Schnitt
 
