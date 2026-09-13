@@ -4,6 +4,8 @@
 
 > Independent exploratory reference architecture. This is not an official NVIDIA product, legal opinion, customer implementation, or production approval.
 
+**Presentation site:** [ofunk-nvidia.github.io/FederatedCoding](https://ofunk-nvidia.github.io/FederatedCoding/)
+
 ## The executive idea
 
 Critical business logic often lives in proprietary COBOL, JCL, PL/SQL, Oracle Forms, and related repositories. General coding assistants know public syntax and patterns, but not the private semantics, dependencies, exceptions, and operating history of a specific customer system.

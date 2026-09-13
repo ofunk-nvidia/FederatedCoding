@@ -11,6 +11,7 @@ This register governs which tools may be presented as part of the open-source re
 | TensorRT-LLM | optional inference optimisation | admitted later-stage candidate | [repository licence](https://github.com/NVIDIA/TensorRT-LLM/blob/main/LICENSE) |
 | NeMo Evaluator | evaluation framework | pending exact-release licence verification | [project repository](https://github.com/NVIDIA-NeMo/Evaluator) |
 | NeMo Framework / Megatron Core | optional scale-up | pending exact-release and dependency review | [NeMo repository](https://github.com/NVIDIA/NeMo) |
+| Material for MkDocs 9.7.7 | GitHub Pages presentation layer | admitted, pinned build dependency | [MIT licence](https://github.com/squidfunk/mkdocs-material/blob/9.7.7/LICENSE) |
 | NVIDIA NIM | productised inference | excluded from strict OSS baseline | [NIM legal terms](https://docs.nvidia.com/nim/large-language-models/latest/resources/legal.html) |
 | NeMo Microservices | managed platform services | excluded from strict OSS baseline | exact product terms must be assessed separately |
 
@@ -19,4 +20,3 @@ This register governs which tools may be presented as part of the open-source re
 Open-weight models require a separate model-licence decision. Public GitHub code, public documentation, and downloadable weights are not automatically open source or permissible training data.
 
 This repository links to tools; it does not vendor or execute them. Any implementation belongs in a separate approved repository.
-

@@ -4,6 +4,8 @@
 
 > Unabhängige explorative Referenzarchitektur. Kein offizielles NVIDIA-Produkt, keine Rechtsberatung, keine Kundenimplementierung und keine Produktionsfreigabe.
 
+**Präsentations-Site:** [ofunk-nvidia.github.io/FederatedCoding](https://ofunk-nvidia.github.io/FederatedCoding/)
+
 ## Die Idee für Executives
 
 Geschäftskritische Logik liegt häufig in proprietären COBOL-, JCL-, PL/SQL-, Oracle-Forms- und verwandten Repositories. Allgemeine Coding-Assistenten kennen öffentliche Syntax und Muster, aber nicht die private Semantik, Abhängigkeiten, Ausnahmen und Betriebshistorie eines konkreten Kundensystems.
